@@ -5,6 +5,10 @@ name = "pypi"
 
 [packages]
 openai = "*"
+flask = "*"
+flask-sqlalchemy = "*"
+deepgram-sdk = "*"
+aiohttp = "*"
 
 [dev-packages]
 
