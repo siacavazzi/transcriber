@@ -3,9 +3,10 @@
 from deepgram import Deepgram
 import asyncio
 import aiohttp
+from key import key
 
 # Your Deepgram API Key
-DEEPGRAM_API_KEY = ''
+DEEPGRAM_API_KEY = key
 
 # URL for the realtime streaming audio you would like to transcribe
 URL = 'http://stream.live.vc.bbcmedia.co.uk/bbc_world_service'
@@ -32,10 +33,10 @@ async def main():
   deepgramLive.register_handler(deepgramLive.event.CLOSE, lambda c: print(f'Connection closed with code {c}.'))
 
   def output(data):
-    speaker = data['channel']['words'][0]['speaker']
+    speaker = data['channel']['alternatives'][0]['words'][0]['speaker']
 
  
-    print(f"Speaker:{speaker} Text: {data['channel']['alternatives'][0]['transcript']}")
+    print(f"Speaker: {speaker} Text: {data['channel']['alternatives'][0]['transcript']}")
 
   # Listen for any transcripts received from Deepgram and write them to the console
   deepgramLive.register_handler(deepgramLive.event.TRANSCRIPT_RECEIVED, output)
