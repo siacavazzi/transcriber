@@ -15,7 +15,7 @@ const AudioStreamer = () => {
             }
           };
   
-          mediaRecorder.start(1000); // Adjust chunk size as needed
+          mediaRecorder.start(5000); // chunk size in ms -> change this as desired
   
           return () => {
             mediaRecorder.stop();
