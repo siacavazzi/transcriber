@@ -1,3 +1,4 @@
 node_modules
 backend/lib/key.py
 .DS_Store
+frontend/package-lock.json

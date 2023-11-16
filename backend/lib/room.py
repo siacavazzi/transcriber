@@ -6,6 +6,6 @@ class Room():
         self.activeFile = None
 
     def record(self, data):
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav", mode='wb') as temp_wav:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".webm", mode='wb') as temp_wav:
             temp_wav.write(data)
             return temp_wav.name
