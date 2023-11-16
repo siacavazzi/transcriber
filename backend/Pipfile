@@ -9,6 +9,8 @@ flask = "*"
 flask-sqlalchemy = "*"
 deepgram-sdk = "*"
 aiohttp = "*"
+flask-socketio = "*"
+eventlet = "*"
 
 [dev-packages]
 
