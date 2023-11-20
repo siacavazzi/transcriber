@@ -6,6 +6,9 @@ import string
 from .key import key
 import mimetypes
 from werkzeug.utils import secure_filename
+from pydub import AudioSegment
+from io import BytesIO
+import os
 
 
 class Room():
@@ -36,9 +39,26 @@ class Room():
 
     def get_transcript(self, data):
         print(data)
-        file_path = self.record(data)
-        text = self.transcribe(file_path)
+        self.record(data)
+        text = self.transcribe()
         return text
+    
+    def trim_audio(self, target_length=10):
+        audio = AudioSegment.from_file(self.activeFile.name, format="webm")
+        duration_ms = len(audio)
+        threshold_ms = target_length * 1000
+
+        if duration_ms > threshold_ms:
+            start_trim = duration_ms - threshold_ms
+            trimmed_audio = audio[start_trim:]
+            output = trimmed_audio
+        else:
+            output = audio
+        temp_file, temp_path = tempfile.mkstemp(suffix='.' + 'webm')
+        output.export(temp_path, format='webm')
+
+        return temp_path
+
 
 
     def record(self, data):
@@ -46,21 +66,16 @@ class Room():
         if self.activeFile is None:
             self.activeFile = tempfile.NamedTemporaryFile(delete=False, suffix=".webm", mode='wb')
         self.activeFile.write(data.read())
-        #self.activeFile.close()
         return self.activeFile.name
+    
+    def transcribe(self):
+        path = self.trim_audio() # replace this with trim_audio
+        file = open(path, 'rb')
+    
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".webm", mode='wb') as temp_file:
-            temp_file.write(data.read())  # Write the binary data to the temp file
-            temp_file.flush()
-            temp_file_path = temp_file.name
-            print(temp_file_path)
-            return temp_file_path
-        
-    def transcribe(self, file_path):
-        audio_file = open(file_path, "rb")
         transcript = self.client.audio.transcriptions.create(
             model="whisper-1", 
-            file=audio_file
+            file=file
             )
         print(transcript)
         return transcript.text

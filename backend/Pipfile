@@ -12,6 +12,7 @@ aiohttp = "*"
 flask-socketio = "*"
 eventlet = "*"
 flask-cors = "*"
+pydub = "*"
 
 [dev-packages]
 
