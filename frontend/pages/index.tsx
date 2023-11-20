@@ -1,6 +1,7 @@
 
 import React from 'react';
 import Button from '../components/Button';
+import AudioStreamer from './Stream';
 
 const Home: React.FC = () => {
   const handleClick = () => {
@@ -18,7 +19,7 @@ const Home: React.FC = () => {
   return (
                                                     
     <div className="flex items-center justify-center h-screen"> {/*header*/}
-      
+      <AudioStreamer/> {/* FOR TESTING*/}
       {/* Toolbar at the top */}
       <div className="flex justify-between w-full p-4 bg-gray-200">
         {/* Left button */}
@@ -29,7 +30,7 @@ const Home: React.FC = () => {
       </div>
 
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-6">Welcome to Transcriber Beta! press the button to begin recording your meeting </h1>
+        <h1 className="text-4xl font-bold mb-6">Welcome to Transcriber Beta! press the button to begin recording your meeting HI </h1>
       </div>
 
       <div className="container mx-auto text-center">           {/*prompt and recording box*/}

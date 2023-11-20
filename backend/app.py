@@ -9,11 +9,15 @@ from deepgram import Deepgram
 import asyncio
 import threading
 from lib.room import Room
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio.init_app(app)
 connected_clients = {}
+CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+
 
 def get_room(sid):
     try:
@@ -22,19 +26,34 @@ def get_room(sid):
         print("Error: No room found")
 
 
-@socketio.on('connect')
-def handle_connect():
-    room = Room(request.sid)
-    connected_clients[request.sid] = room
-    print('Client connected: '+ request.sid)
+
+@app.get('/room')
+def make_room_code():
+    code = Room.generate_code(connected_clients)
+    connected_clients[code] = Room()
+    return {'room_code': code}
 
 
-@socketio.on('audio-chunk')
-def handle_audio_chunk(data):
-    print('got audio! '+ request.sid)
-    room = get_room(request.sid)
-    file = room.record(data)
-    print(file)
+
+@app.post('/audio')
+def handle_audio():
+    print("got audio")
+    #try:
+    if True: # this is for testing - proper error handling will be implemented
+        file = request.files['audio_data']
+        room_code = request.form.get('room_code')
+        room = get_room(room_code)
+
+        text = room.get_transcript(file)
+        print("TEXT:")
+        print(text)
+        return jsonify({'transcript': text})
+
+    #except Exception as e:
+        print('error')
+        print(e)
+        return {'error': "error"}
+
 
 
 if __name__ == '__main__':

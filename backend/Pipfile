@@ -11,6 +11,7 @@ deepgram-sdk = "*"
 aiohttp = "*"
 flask-socketio = "*"
 eventlet = "*"
+flask-cors = "*"
 
 [dev-packages]
 
