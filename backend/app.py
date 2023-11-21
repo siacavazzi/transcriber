@@ -3,7 +3,9 @@ eventlet.monkey_patch()
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 from flask import Flask, request, jsonify
 from extensions import socketio
-
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_restful import Api, Resource 
 from lib.key import key
 from deepgram import Deepgram
 import asyncio
@@ -13,6 +15,8 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+migrate = Migrate(app, db)
 socketio.init_app(app)
 connected_clients = {}
 CORS(app)
@@ -37,7 +41,6 @@ def make_room_code():
 
 @app.post('/audio')
 def handle_audio():
-    print("got audio")
     #try:
     if True: # this is for testing - proper error handling will be implemented
         file = request.files['audio_data']
@@ -45,8 +48,6 @@ def handle_audio():
         room = get_room(room_code)
 
         text = room.get_transcript(file)
-        print("TEXT:")
-        print(text)
         return jsonify({'transcript': text})
 
     #except Exception as e:

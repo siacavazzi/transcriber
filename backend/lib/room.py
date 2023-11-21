@@ -7,6 +7,7 @@ from .key import key
 import mimetypes
 from werkzeug.utils import secure_filename
 from pydub import AudioSegment
+from .transcript import Transcript
 from io import BytesIO
 import os
 
@@ -31,23 +32,25 @@ class Room():
         filename = secure_filename(file_storage.filename)
         return filename.rsplit('.', 1)[1].lower() if '.' in filename else None
     
-    def __init__(self):
-        
+    def __init__(self, target_length=10):
+        self.transcript = Transcript()
         self.activeFile = None
         self.client = OpenAI()
         self.client.api_key = key
+        self.current_len = 0
+        self.target_length = target_length
 
     def get_transcript(self, data):
-        print(data)
         self.record(data)
         text = self.transcribe()
         return text
     
-    def trim_audio(self, target_length=10):
+    def trim_audio(self):
+        
         audio = AudioSegment.from_file(self.activeFile.name, format="webm")
         duration_ms = len(audio)
-        threshold_ms = target_length * 1000
-
+        threshold_ms = self.target_length * 1000
+        
         if duration_ms > threshold_ms:
             start_trim = duration_ms - threshold_ms
             trimmed_audio = audio[start_trim:]
@@ -67,6 +70,7 @@ class Room():
         return self.activeFile.name
     
     def transcribe(self):
+        self.current_len += 1
         path = self.trim_audio() # replace this with trim_audio
         file = open(path, 'rb')
         transcript = self.client.audio.transcriptions.create(
@@ -74,8 +78,16 @@ class Room():
             file=file,
             language='en'
             )
+        os.remove(path)
         print(transcript)
-        return transcript.text
+        print(f"length in seconds: {self.current_len}")
+        if (self.current_len == self.target_length)  or (self.current_len > self.target_length):
+            self.transcript.add_chunk(transcript.text)
+            self.current_len = 0
+        
+        partial_ts = self.transcript.get_partial_ts(transcript.text)
+        print(partial_ts)
+        return partial_ts
         
 
 
