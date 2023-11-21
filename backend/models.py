@@ -17,7 +17,7 @@ class Line(db.Model):
     time_ms = db.Column(db.Integer)
     text = db.Column(db.String)
 
-   # transcript_id = 
+    transcript_id = db.Column(db.Integer, db.ForeignKey("transcripts.id"))
 
 # Line model - represents one 10s chunk of transcript
 # id, transcript_id,start_time, end_time, time_ms?
@@ -30,7 +30,15 @@ class Line(db.Model):
 # attributes: id, user_id, time_started, time_ended, title, description
 
 class Transcript(db.Model):
+    __tablename__ = "transcripts"
+
     id = db.Column(db.Integer, primary_key = True)
+    time_started = db.Column(db.Date)
+    time_ended = db.Column(db.Date)
+    title = db.Column(db.String)
+    description = db.Column(db.String)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     
 
 # GPT comment model - each row is a GPT comment about the transcript
@@ -39,10 +47,26 @@ class Transcript(db.Model):
 # Config model - transcription configs
 # id, user_id, prompt, generate_images (bool), ... other settings idk yet
 
+class Config(db.Model):
+    __tablename__ = "configs"
+
+    id = db.Column(db.Integer, primary_key = True)
+    prompt = db.Column(db.String)
+    generate_img = db.Column(db.Boolean)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
 # User model
 # id, username/ email, name, p/w hash, date created
 
+class User(db.Model):
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String)
+    name = db.Column(db.String)
+    pass_hash = db.Column(db.String)
+    creation_date = db.Column(db.Date)
 
 
 # associated with user: transcripts, configs
