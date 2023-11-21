@@ -3,36 +3,12 @@ import { useEffect, useState } from 'react';
 
 const options = { mimeType: 'audio/webm' };
 
-function downloadBlob(blob: Blob, baseFilename = 'audiofile') {
-  // Create a timestamp
-  const timestamp = new Date().toISOString().replace(/[\-:T]/g, '').slice(0, 14);
-
-  // Construct a unique filename using the baseFilename and timestamp
-  const filename = `${baseFilename}_${timestamp}.webm`;
-
-  // Create an object URL for the blob
-  const url = window.URL.createObjectURL(blob);
-
-  // Create a new anchor element
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-
-  // Append the anchor to the document body and trigger the download
-  document.body.appendChild(a);
-  a.click();
-
-  // Clean up by removing the anchor and revoking the object URL
-  document.body.removeChild(a);
-  window.URL.revokeObjectURL(url);
-}
 const AudioStreamer = () => {
   const [roomCode, setRoomCode] = useState(null);
   const [isRecording, setIsRecording] = useState(false)
   const [transcript, setTranscript] = useState('')
 
-
-
+  // function to post audio to backend
   function sendAudio(roomCode: any, data: Blob) {
     console.log(data)
 
@@ -58,7 +34,6 @@ const AudioStreamer = () => {
           console.log(mediaRecorder.mimeType)
           mediaRecorder.ondataavailable = e => {
             if (e.data.size > 0 && roomCode) {
-              //socket.emit('audio-chunk', e.data);
               console.log("sending audio... Room: " + roomCode)
               sendAudio(roomCode, e.data)
               // downloadBlob(e.data)
@@ -81,18 +56,16 @@ const AudioStreamer = () => {
       startRecording()
     } else {
       stopRecording()
-    }
+    } // useeffect triggers when these vars change
   }, [isRecording, roomCode]);
 
+  // get a room code when starting (to handle multiple users)
   function getRoomCode() {
     fetch("http://localhost:5000/room")
       .then(resp => resp.json())
       .then(data => setRoomCode(data['room_code']))
     setIsRecording(true)
   }
-
-
-
 
   return (
     <div>

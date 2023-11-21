@@ -59,8 +59,6 @@ class Room():
 
         return temp_path
 
-
-
     def record(self, data):
         data.seek(0)
         if self.activeFile is None:
@@ -71,11 +69,10 @@ class Room():
     def transcribe(self):
         path = self.trim_audio() # replace this with trim_audio
         file = open(path, 'rb')
-    
-
         transcript = self.client.audio.transcriptions.create(
             model="whisper-1", 
-            file=file
+            file=file,
+            language='en'
             )
         print(transcript)
         return transcript.text
