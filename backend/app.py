@@ -12,6 +12,7 @@ import asyncio
 import threading
 from lib.room import Room
 from flask_cors import CORS
+from models import db
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
