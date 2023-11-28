@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 const options = { mimeType: 'audio/webm' };
 
+// NOTE: add chunk length as a prop 
 const AudioStreamer = () => {
   const [roomCode, setRoomCode] = useState(null);
   const [isRecording, setIsRecording] = useState(false)
@@ -36,8 +37,7 @@ const AudioStreamer = () => {
             if (e.data.size > 0 && roomCode) {
               console.log("sending audio... Room: " + roomCode)
               sendAudio(roomCode, e.data)
-              // downloadBlob(e.data)
-              /// maybe change this to be a post....
+              // downloadBlob(e.data) <- debug method, uncomment to download blobs to browser
             }
           };
 
