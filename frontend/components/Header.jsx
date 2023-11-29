@@ -13,11 +13,12 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import Link from 'next/link';
+import { useUser } from './UserContext'
 
 const pages = ['My Transcripts'];
 const settings = ['Logout'];
 
-function ResponsiveAppBar(props) {
+function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -36,7 +37,7 @@ function ResponsiveAppBar(props) {
     setAnchorElUser(null);
   };
 
-  const { user } = props;
+  const { user } = useUser();
   return (
     <AppBar position="static">
       <Container maxWidth="xl">

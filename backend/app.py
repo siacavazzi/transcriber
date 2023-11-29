@@ -95,6 +95,32 @@ class Users(Resource):
         except Exception as e:
             return { 'error': str(e)}
         
+    def get(self):
+        try:
+            json = request.json
+            user = User.query.filter(User.email == json["email"]).first()
+            
+            if user and bcrypt.check_password_hash(user.pass_hash, json["password"]):
+                return user.to_dict(), 202
+            else:
+                return {"error":"username or password incorrect"}
+        except Exception as e:
+            return {"error":str(e)}
+        
+    def delete(self):
+        try:
+            json = request.json
+            user = User.query.filter(User.email == json["email"]).first()
+
+            if not user:
+                return {"error":"user does not exist"}
+            db.session.delete(user)
+            db.session.commit()
+            return {"message": "user deleted"}
+
+        except Exception as e:
+            return { 'error': str(e)}
+            
 api.add_resource(Users, '/users')
         
 if __name__ == '__main__':
