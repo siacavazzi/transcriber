@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Button from '../components/Button';
-import AudioStreamer from './Stream';
+import AudioStreamer from '../components/Stream';
 
 const Home: React.FC = () => {
   const handleClick = () => {

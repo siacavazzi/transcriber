@@ -17,6 +17,8 @@ fuzzywuzzy = "*"
 python-levenshtein = "*"
 flask-migrate = "*"
 flask-restful = "*"
+flask-bcrypt = "*"
+sqlalchemy-serializer = "*"
 
 [dev-packages]
 

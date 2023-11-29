@@ -1,7 +1,7 @@
 import eventlet
 eventlet.monkey_patch()
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from extensions import socketio
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -12,11 +12,16 @@ import asyncio
 import threading
 from lib.room import Room
 from flask_cors import CORS
-from models import db
+from models import db, User
+from flask_bcrypt import Bcrypt
+from datetime import date
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+db.init_app(app)
+bcrypt = Bcrypt(app)
+api = Api(app)
 migrate = Migrate(app, db)
 socketio.init_app(app)
 connected_clients = {}
@@ -38,12 +43,14 @@ def make_room_code():
     connected_clients[code] = Room()
     return {'room_code': code}
 
-
+@app.get('/ping')
+def ping():
+    return jsonify({'ping':'server online'})
 
 @app.post('/audio')
 def handle_audio():
-    #try:
-    if True: # this is for testing - proper error handling will be implemented
+    try:
+     # this is for testing - proper error handling will be implemented
         file = request.files['audio_data']
         room_code = request.form.get('room_code')
         room = get_room(room_code)
@@ -51,12 +58,45 @@ def handle_audio():
         text = room.get_transcript(file)
         return jsonify({'transcript': text})
 
-    #except Exception as e:
+    except Exception as e:
         print('error')
         print(e)
         return {'error': "error"}
 
+def current_user():
+    return User.query.filter(User.id == session.get('user_id')).first()
 
+@app.get('/check_session')
+def check_session():
+    user = current_user()
+    if user:
+        return jsonify(user.to_dict()), 200
+    else:
+        return {}, 400
 
+# RESTful api for user accounts
+class Users(Resource):
+    def post(self):
+        try:
+            json = request.json
+        # check if the email is already in the db
+            user_with_same_email = User.query.filter(User.email == json['email']).first()
+            print(user_with_same_email)
+            if user_with_same_email:
+                return {"error":"user exists"}
+        
+            pw_hash = bcrypt.generate_password_hash(json['password']).decode('utf-8')
+            new_user = User(email = json['email'], pass_hash=pw_hash, fname=json['fname'], lname=json['lname'], creation_date=date.today())
+            db.session.add(new_user)
+            db.session.commit()
+            session['user_id'] = new_user.id
+
+            return new_user.to_dict(), 201
+        except Exception as e:
+            return { 'error': str(e)}
+        
+api.add_resource(Users, '/users')
+        
 if __name__ == '__main__':
+    print("Server Started...")
     socketio.run(app, host='0.0.0.0', port=5000)
