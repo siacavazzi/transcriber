@@ -70,6 +70,9 @@ class User(db.Model, SerializerMixin):
     pass_hash = db.Column(db.String)
     creation_date = db.Column(db.Date)
 
+    def secure_dict(self):
+        return {"id":self.id,"email":self.email,"fname":self.fname,"lname":self.lname}
+
 
 # associated with user: transcripts, configs
 

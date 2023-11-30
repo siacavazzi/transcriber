@@ -25,8 +25,7 @@ api = Api(app)
 migrate = Migrate(app, db)
 socketio.init_app(app)
 connected_clients = {}
-CORS(app)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, supports_credentials=True,resources={r"/*": {"origins": "http://localhost:3000"}})
 
 
 def get_room(sid):
@@ -61,18 +60,46 @@ def handle_audio():
     except Exception as e:
         print('error')
         print(e)
-        return {'error': "error"}
+        return {'error': "error"}, 500
 
 def current_user():
-    return User.query.filter(User.id == session.get('user_id')).first()
+    user = User.query.filter(User.id == session.get('user_id')).first()
+    return user
 
 @app.get('/check_session')
 def check_session():
     user = current_user()
     if user:
-        return jsonify(user.to_dict()), 200
+        return jsonify(user.secure_dict()), 200
     else:
-        return {}, 400
+        return {'message':'No user found'}, 400
+
+
+@app.post('/login')
+def login():
+    try:
+        json = request.json
+        user = User.query.filter(User.email == json["email"]).first()
+            
+        if user and bcrypt.check_password_hash(user.pass_hash, json["password"]):
+            session["user_id"] = user.id
+            print(session.get('user_id'))
+            return user.secure_dict(), 202
+        else:
+            return {"error":"Incorrect login information. Please try again."}
+    except Exception as e:
+        return {"error":str(e)}
+    
+@app.get('/logout')
+def logout():
+    try:
+        session.pop('user_id', None)
+        return {}, 202
+    except:
+        return {"error":"User could not be logged out."}, 500
+
+
+
 
 # RESTful api for user accounts
 class Users(Resource):
@@ -83,7 +110,7 @@ class Users(Resource):
             user_with_same_email = User.query.filter(User.email == json['email']).first()
             print(user_with_same_email)
             if user_with_same_email:
-                return {"error":"user exists"}
+                return {"error":"Email already in use. Please try a different email."}
         
             pw_hash = bcrypt.generate_password_hash(json['password']).decode('utf-8')
             new_user = User(email = json['email'], pass_hash=pw_hash, fname=json['fname'], lname=json['lname'], creation_date=date.today())
@@ -91,9 +118,9 @@ class Users(Resource):
             db.session.commit()
             session['user_id'] = new_user.id
 
-            return new_user.to_dict(), 201
+            return new_user.secure_dict(), 201
         except Exception as e:
-            return { 'error': str(e)}
+            return { 'error': str(e)}, 500
         
     def get(self):
         try:
@@ -103,7 +130,7 @@ class Users(Resource):
             if user and bcrypt.check_password_hash(user.pass_hash, json["password"]):
                 return user.to_dict(), 202
             else:
-                return {"error":"username or password incorrect"}
+                return {"error":"Incorrect email or password."}
         except Exception as e:
             return {"error":str(e)}
         
@@ -116,10 +143,10 @@ class Users(Resource):
                 return {"error":"user does not exist"}
             db.session.delete(user)
             db.session.commit()
-            return {"message": "user deleted"}
+            return {"message": "user deleted"}, 200
 
         except Exception as e:
-            return { 'error': str(e)}
+            return { 'error': str(e)}, 500
             
 api.add_resource(Users, '/users')
         

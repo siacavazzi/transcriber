@@ -4,9 +4,14 @@ import { useUser } from './UserContext';
 const SessionHandler = ({ children }) => {
     const { updateUser } = useUser();
 
+    const OPTIONS = {
+        method: "GET",
+        credentials: 'include'
+    }
+
     useEffect(() => {
         console.log("Checking session...");
-        fetch("/check_session")
+        fetch("http://localhost:5000/check_session", OPTIONS)
             .then(resp => {
                 if (resp.ok) {
                     console.log("Check session found user.");
@@ -15,7 +20,7 @@ const SessionHandler = ({ children }) => {
                     console.log(`Check session failed to find user. Status code ${resp.status}`);
                 }
             });
-    }, [updateUser]);
+    }, []);
 
     return <>{children}</>;
 };

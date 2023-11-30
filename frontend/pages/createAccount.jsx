@@ -56,6 +56,7 @@ export default function SignUp({ setUser }) {
         });
         const OPTIONS = {
             method: "POST",
+            credentials: 'include',
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
