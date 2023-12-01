@@ -1,4 +1,5 @@
 from fuzzywuzzy import fuzz, process
+from .models import Transcript, Line
 
 class Transcript():
     
