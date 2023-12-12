@@ -10,7 +10,7 @@ from pydub import AudioSegment
 from .transcript import Transcript
 from io import BytesIO
 import os
-# room class
+
 
 class Room():
 
