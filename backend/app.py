@@ -31,6 +31,7 @@ def get_room(sid):
         return connected_clients[sid]
     except:
         print("Error: No room found")
+        return None
 
 
 
