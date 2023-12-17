@@ -23,7 +23,6 @@ class Room():
     
     @classmethod
     def get_mime_type(cls, file_storage):
-        print("filename")
         print(file_storage.filename)
         return mimetypes.guess_type(file_storage.filename)[0]
     
