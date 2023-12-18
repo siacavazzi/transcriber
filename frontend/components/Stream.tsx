@@ -5,9 +5,12 @@ const options = { mimeType: 'audio/webm' };
 
 // NOTE: add chunk length as a prop 
 const AudioStreamer = () => {
+  let counter = 0;
   const [roomCode, setRoomCode] = useState(null);
   const [isRecording, setIsRecording] = useState(false)
   const [transcript, setTranscript] = useState('')
+
+  
 
   // function to post audio to backend
   function sendAudio(roomCode: any, data: Blob) {

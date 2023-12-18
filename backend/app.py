@@ -54,7 +54,7 @@ def handle_audio():
         room = get_room(room_code)
 
         text = room.get_transcript(file)
-        return jsonify({'transcript': text})
+        return jsonify(text)
 
     except Exception as e:
         print('error')

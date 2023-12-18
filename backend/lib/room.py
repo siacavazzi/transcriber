@@ -41,8 +41,8 @@ class Room():
 
     def get_transcript(self, data):
         self.record(data)
-        text = self.transcribe()
-        return text
+        ts = self.transcribe()
+        return ts
     
     def trim_audio(self):
         
@@ -79,12 +79,14 @@ class Room():
             )
         os.remove(path)
         print(transcript)
+        partial_ts = {}
+        partial_ts['flag'] = None
         print(f"length in seconds: {self.current_len}")
         if (self.current_len == self.target_length)  or (self.current_len > self.target_length):
             self.transcript.add_chunk(transcript.text)
             self.current_len = 0
-        
-        partial_ts = self.transcript.get_partial_ts(transcript.text)
+            partial_ts['flag'] = 'chunk_end'
+        partial_ts['transcript'] = self.transcript.get_partial_ts(transcript.text)
         print(partial_ts)
         return partial_ts
         
