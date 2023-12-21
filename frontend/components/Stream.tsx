@@ -40,7 +40,7 @@ const AudioStreamer = () => {
             if (e.data.size > 0 && roomCode) {
               console.log("sending audio... Room: " + roomCode)
               sendAudio(roomCode, e.data)
-              // downloadBlob(e.data) <- debug method, uncomment to download blobs to browser
+
             }
           };
 
