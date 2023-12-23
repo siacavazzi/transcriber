@@ -71,11 +71,13 @@ class Room():
         self.current_len += 1
         path = self.trim_audio() 
         file = open(path, 'rb')
+        
         transcript = self.client.audio.transcriptions.create(
             model="whisper-1", 
             file=file,
             language='en'
             )
+        
         os.remove(path)
         print(transcript)
         partial_ts = {}
