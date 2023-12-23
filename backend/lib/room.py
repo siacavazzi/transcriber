@@ -69,7 +69,7 @@ class Room():
     
     def transcribe(self):
         self.current_len += 1
-        path = self.trim_audio() # replace this with trim_audio
+        path = self.trim_audio() 
         file = open(path, 'rb')
         transcript = self.client.audio.transcriptions.create(
             model="whisper-1", 
