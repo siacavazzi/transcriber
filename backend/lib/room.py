@@ -11,7 +11,6 @@ from .transcript import Transcript
 from io import BytesIO
 import os
 
-
 class Room():
 
     @classmethod
