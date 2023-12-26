@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_restful import Api, Resource 
 
-
+# local imports
 from lib.room import Room
 from flask_cors import CORS
 from lib.models import db, User
@@ -96,8 +96,6 @@ def logout():
         return {}, 202
     except:
         return {"error":"User could not be logged out."}, 500
-
-
 
 
 # RESTful api for user accounts

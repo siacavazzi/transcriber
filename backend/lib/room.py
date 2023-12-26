@@ -1,6 +1,5 @@
 import tempfile
 from openai import OpenAI
-import asyncio
 import random
 import string
 from .key import key
