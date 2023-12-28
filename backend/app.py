@@ -10,7 +10,6 @@ from flask_restful import Api, Resource
 from flask_bcrypt import Bcrypt
 from datetime import date
 
-
 from lib.room import Room
 from lib.models import db, User
 
