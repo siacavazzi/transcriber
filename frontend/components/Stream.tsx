@@ -2,7 +2,7 @@ import io from 'socket.io-client';
 import { useEffect, useState } from 'react';
 
 const options = { mimeType: 'audio/webm' };
-
+// Note: add more commits
 // NOTE: add chunk length as a prop 
 const AudioStreamer = () => {
   let counter = 0;
