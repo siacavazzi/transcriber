@@ -9,10 +9,8 @@ from flask_cors import CORS
 from flask_restful import Api, Resource 
 from flask_bcrypt import Bcrypt
 from datetime import date
-## bingus
 from lib.room import Room
 from lib.models import db, User
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
