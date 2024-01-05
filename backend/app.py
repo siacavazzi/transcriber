@@ -23,7 +23,6 @@ socketio.init_app(app)
 connected_clients = {}
 CORS(app, supports_credentials=True,resources={r"/*": {"origins": "http://localhost:3000"}})
 
-
 def get_room(sid):
     try:
         return connected_clients[sid]
